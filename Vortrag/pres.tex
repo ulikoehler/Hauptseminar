@@ -1,0 +1,88 @@
+% Notizen von Anton
+% 1. Sind die Überschriften zu links?
+% 2. Finde die drei Pünktchen zwischen den Sequenzen supergut
+% 3. Links neben dem Diagramm sieht der Text etwas zu groß aus? Ich glaube du hattest recht, lieber drunter als daneben
+% 4. zwischen 13 und 14: Diagramm verschoben
+% 5. Unten: Folie x von 1? 
+% 6. Alle Boxen jetzt verschoben?? da hat doch vorhin alles gepasst? 
+% 7. Titel: '.. Praktikum ... in' ?
+%
+\documentclass[14pt,xcolor=dvipsnames,pdftex]{beamer}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{hyperref}
+\usepackage{pgfpages}
+\usepackage{color}
+\usepackage{textcomp}
+\usepackage{alltt}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{booktabs}
+
+
+\usepackage{tikz}
+\usetikzlibrary{calc,arrows,matrix,fit}
+
+\usepackage{lmodern}
+
+\newcommand{\tikzmark}[2]{\tikz[overlay,remember picture,baseline=(#1.base)] \node (#1) {#2};}
+
+\usepackage{inconsolata} % TT font
+\usepackage{array}
+\usepackage{url}
+%\usepackage[svgnames]{xcolor}\\
+%\usetheme[secheader]{Boadilla}
+%\usefonttheme{sans}
+\setbeamersize{text margin left=1cm,text margin right=1cm}
+\setbeamertemplate{section in toc}[Palo Alto]
+
+\newcolumntype{T}{c<{\ttfamily}}
+
+\title{Phylogenomic inference}
+\author{Uli Köhler}
+\date{February 3rd 2014}
+
+\setbeamertemplate{footline}
+{%
+%\begin{beamercolorbox}[wd=0.5\textwidth,ht=3ex,dp=1.5ex,leftskip=.5em,rightskip=.5em]{author in head/foot}%
+%\usebeamerfont{author in head/foot}%
+%\insertframenumber\hfill\insertshortauthor%
+%\end{beamercolorbox}%
+\vspace*{-4.5ex}\hspace*{0.5\textwidth}%
+\begin{beamercolorbox}[width=\textwidth,ht=3ex,dp=1.5ex,left]{title in head/foot}%
+\usebeamerfont{title in head/foot}%
+Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
+%\insertshorttitle%
+\end{beamercolorbox}%
+}
+
+\AtBeginSection[]{} % for optional outline or other recurrent slide
+
+\begin{document}
+\bgroup
+\setbeamercolor{background canvas}{bg=black}
+
+\begin{frame}[plain]{}
+\end{frame}
+
+\egroup
+
+\frame{\titlepage}
+
+\begin{frame}
+\begin{itemize}
+\item Issues of non-phylogenic functional prediction
+\item Phylogenetic tree reconciliation
+\item Phylogenomic databases and algorithms:
+\begin{itemize}
+ \item SIFTER
+ \item PhyloFacts
+\end{itemize}
+\item Common problems of phylogenomic predictions
+\item Future
+\item Seminar conclusion
+\end{itemize}
+\end{frame}
+
+\end{document}
