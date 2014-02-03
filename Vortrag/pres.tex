@@ -1,16 +1,7 @@
-% Notizen von Anton
-% 1. Sind die Überschriften zu links?
-% 2. Finde die drei Pünktchen zwischen den Sequenzen supergut
-% 3. Links neben dem Diagramm sieht der Text etwas zu groß aus? Ich glaube du hattest recht, lieber drunter als daneben
-% 4. zwischen 13 und 14: Diagramm verschoben
-% 5. Unten: Folie x von 1? 
-% 6. Alle Boxen jetzt verschoben?? da hat doch vorhin alles gepasst? 
-% 7. Titel: '.. Praktikum ... in' ?
-%
 \documentclass[14pt,xcolor=dvipsnames,pdftex]{beamer}
 \usepackage[utf8x]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[ngerman]{babel}
+\usepackage[english]{babel}
 \usepackage{hyperref}
 \usepackage{pgfpages}
 \usepackage{color}
@@ -19,10 +10,11 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{booktabs}
-
+\usepackage{textcomp}
+\usepackage{color}
 
 \usepackage{tikz}
-\usetikzlibrary{calc,arrows,matrix,fit}
+\usetikzlibrary{calc,arrows,matrix,fit,positioning}
 
 \usepackage{lmodern}
 
@@ -83,6 +75,248 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
 \item Future of phylogenomics
 \item Seminar conclusion
 \end{itemize}
+\end{frame}
+
+\begin{frame}{Non-phylogenomic function prediction}
+ \begin{itemize}
+  \item Intention: Predict gene/protein function
+  \item \textit{High-throughput sequencing}\\
+  \textrightarrow Many proteins, few information available
+  \item Slow manual annotation: $~90000$ PDB structures vs $5.1\times10^6$ UniProt/TrEMBL sequences
+  \item Difficult to separate \textit{orthologs} and \textit{paralogs}
+ \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{What is phylogenomics?}
+ \begin{tikzpicture}[scale=0.65,>=latex',yshift=-3cm]
+ \tikzstyle{toptext}=[block,font=\huge,minimum height=3em,anchor=mid,text centered]
+ \tikzstyle{labeltext}=[block,font=\large,minimum height=3em,anchor=west,text centered]
+ \begin{scope}[yshift=-4cm]
+  % Text at the top
+  \node [toptext](phylo) {\raisebox{0pt}[\height][0pt]{\textcolor{ForestGreen}{Phylo}}};
+  \node [toptext,right=-3mm of phylo](genomic)
+    {\raisebox{0pt}[\height][0pt]{\textcolor{Red}{genomic}}};
+  \node [toptext,right=0cm of genomic] (inference)
+    {\raisebox{0pt}[\height][0pt]{\textcolor{Blue}{inference}}};
+  % Labels
+  \node [labeltext,below=4cm of phylo,xshift=4cm] (phylolabel)
+      {\textcolor{ForestGreen}{Evolutionary relationship (phylogenetics)}};
+  \node [labeltext,below=2.5cm of genomic,xshift=1cm] (genomicslabel)
+      {\textcolor{Red}{utilize genomic information}};
+  \node [labeltext,below=10mm of inference] (inferencelabel)
+      {\textcolor{Blue}{infer function}};
+  % Arrows
+  \draw [thick,->,arrowhead=4mm, line width=2pt]
+      (phylolabel.north -| phylo.north) to (phylo);
+  \draw [thick,->,arrowhead=4mm, line width=2pt]
+      (genomicslabel.north -| genomic.north) to (genomic);
+  \draw [thick,->,arrowhead=4mm, line width=2pt]
+      (inferencelabel.north -| inference.north) to (inference);
+ \end{scope}
+ \end{tikzpicture}
+ \framebreak
+ \begin{itemize}
+  \item Function prediction enhancement concept
+  \item Can be applied to both genes and proteins
+  \item Attempt to \textbf{separate \textit{orthologs} and \textit{paralogs}}
+  \item Infer function based on homology
+  \item \textit{Phylogenetic tree reconciliation}:\\
+        Identify \textit{speciation} and \textit{duplication} events in phylogenetic trees
+ \end{itemize}
+\end{frame}
+
+\begin{frame}<1-3>{Tree reconciliation}
+\begin{tikzpicture}
+\onslide<1->
+\tikzset{
+  protein/.style = {block, align=center, text centered,fill=orange,
+		    draw, rectangle, rounded corners},
+  ancestor/.style = {block,minimum size=0cm},
+  connection/.style = {thick,draw,arrowhead=4mm, line width=2pt}
+};
+%Protein nodes
+\node [protein] (proteinA) {A};
+\node [protein, right=2cm of proteinA] (proteinB) {B};
+\node [protein, right=2cm of proteinB] (proteinC) {C};
+%Invisible ancestors
+\node [ancestor,yshift=2cm] (AB) at ($(proteinA)!0.5!(proteinB)$) {};
+\node [ancestor,yshift=3cm] (ABC) at ($(proteinB)!0.5!(proteinC)$) {};
+%Paths
+\draw [connection]
+      (proteinA) |- (AB.east);
+\draw [connection]
+      (proteinB) |- (AB.west);
+\draw [connection]
+      ([yshift=1.4mm]AB.south) |- (ABC.east);
+%To-root
+\draw [connection]
+      ([yshift=1.4mm]ABC.south) -- ([yshift=1cm]ABC.north);
+%C -> root
+\onslide<1-2>
+\draw [connection]
+      (proteinC) |- (ABC.west);
+\onslide<3>
+\draw [connection,dashed]
+      (proteinC) |- (ABC.west);
+%Text
+\onslide<1>
+\node [right=5mm of proteinC,text width=3cm,yshift=2cm] (txt)
+      {Are B and C \textit{ortholog}\\or \textit{paralog} in respect to A?};
+\onslide<2>
+\node [left=0mm of ABC,yshift=10mm,x](dupspecLabel){\textcolor{red}{Duplication or speciation?}};
+\draw [draw=red,->, line width=2pt]
+      (dupspecLabel) to [bend right=15](AB.mid);
+\draw [draw=red,->, line width=2pt]
+      (dupspecLabel) to (ABC.mid);
+%Slide 3: Example
+\onslide<3>
+\node [left=2cm of ABC,yshift=15mm](dupspecLabel){(Example)};
+\node [left=5mm of AB,yshift=10mm](specLabel){\textcolor{ForestGreen}{Speciation}};
+\node [right=1cm of ABC,yshift=5mm](dupLabel){\textcolor{Red}{Duplication}};
+\draw [draw=ForestGreen,->, line width=2pt]
+      (specLabel) to (AB.mid);
+\draw [draw=red,->,line width=2pt]
+      (dupLabel) to (ABC.mid);
+
+\node [right=5mm of proteinC,text width=3cm,yshift=2cm] (txt)
+      {B: \textit{ortholog}\\C: \textit{paralog}};
+
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}{SIFTER}
+\begin{itemize}
+ \item \textit{Statistical Inference of Function Through Evolutionary Relationships}
+ \item Predicts protein function (homology-based) given a reconciled tree\\
+ \textrightarrow Tree construction \& conciliation remains a problem
+ \item Based on bayesian statistics
+ \item Complex statistics (not shown here)
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Phylogenomic inference methodology}
+ \begin{enumerate}
+  \item Cluster homolog proteins
+  \item Compute multiple alignment
+  \item Edit alignment (remove potential non-homologs)
+  \item Mask less-conserved regions in alignment
+  \item Construct phylogenetic tree
+  \item Identify closely related subtrees
+  \item Overlay with experimental data
+  \item Differentiate \textit{orthologs} and \textit{paralogs}\\
+	(\textit{Tree reconciliation})
+  \item Infer function from \textit{orthologs}
+ \end{enumerate}
+ \framebreak
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Issues of phylogenomic methods}
+  \textcolor{ForestGreen}{\textit{in-silico}}\ --\ \textcolor{Red}{Involves manual steps}
+ \begin{enumerate}
+  \item \textcolor{Red}{Cluster homolog proteins}
+  \item \textcolor{ForestGreen}{Compute multiple alignment}
+  \item \textcolor{Red}{Edit alignment}
+  \item \textcolor{Red}{Mask less-conserved regions in alignment}
+  \item \textcolor{ForestGreen}{Construct phylogenetic tree}
+  \item \textcolor{ForestGreen}{Identify closely related subtrees}
+  \item \textcolor{Red}{Overlay with experimental data}
+  \item \textcolor{ForestGreen}{Differentiate \textit{orthologs} and \textit{paralogs}}
+  \item \textcolor{Red}{Infer function from \textit{orthologs}}
+ \end{enumerate}
+ \framebreak
+ \begin{enumerate}
+  \item Cluster homolog proteins
+  \item Compute multiple alignment
+  \item Edit alignment (remove potential non-homologs)
+  \item Mask less-conserved regions in alignment
+  \end{enumerate}
+  \begin{itemize}
+   \item Manual annotation \& selection\\
+   \textrightarrow Subjective, error-prone, time/cost-intensive
+  \end{itemize}
+ %%%
+ \framebreak
+ \begin{enumerate}
+  \setcounter{enumi}{4}
+  \item Construct phylogenetic tree
+ \end{enumerate}
+ \begin{itemize}
+  \item \textit{Distance-based} vs. \textit{character-based} construction algorithms
+  \item Small, highly-conserved protein families perform better than large (super)families
+  \item Lack of consistency across methods
+  \item Algorithms scale poorly
+  \textrightarrow Can't be used for large (super)families
+  \item Some methods produce millions of equivalently scored topologies
+ \end{itemize}
+ %%%
+ \framebreak
+ \begin{enumerate}
+  \setcounter{enumi}{6}
+  \item Overlay with experimental data
+ \end{enumerate}
+ \begin{itemize}
+  \item Database = Experimental data + sinferred data
+  \item Experimental datasets available
+        $\leftrightarrow$ Protein function already know
+  \item Protein function unknown $\leftrightarrow$ few experimental datasets available
+ \end{itemize}
+ %%%
+ \framebreak
+ \begin{itemize}
+  \item Huge sets of parameters
+  \item Requires manual annotation  experimental data
+ \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Future of phylogenomic inference}
+ \begin{itemize}
+  \item Phylogenomics alone has too many problems and open questions, but...
+  \pause
+  \item ...\textbf{together with other concepts} functional prediction accuracy can be enhanced
+  \item Computational complexity: Moore's law and alternative computational hardware\\
+  \textrightarrow Large-scale application feasible in the future?
+  \item 
+ \end{itemize}
+\end{frame}
+
+ 
+\begin{frame}{Conclusion (Phylogenomic inference)}
+ \begin{itemize}
+  \item Powerful concept to separate \textit{orthologs} and \textit{paralogs}
+  \pause
+  \item ... if it would actually work in practice
+  \item Too complex, too manual, too many parameters
+  \item Pure \textit{in-silico} phylogenomics\\
+  \textrightarrow\ Low quality results
+  \item Manual annotation can't keep up with \textit{HTS}
+ \end{itemize}
+\end{frame}
+
+\begin{frame}{Conclusion (Seminar)}
+\begin{itemize}
+\item Protein function inference is a yet unsolved problem in computational biology
+\item Combine any information that is available, e.g.:
+\begin{itemize}
+ \item Phylogenomics
+ \item Context-based prediction
+ \item Pseudogenes
+ \item Horizontal gene transfer
+ \item Alternative splicing
+ \item SNPs
+ \item Experimental databases
+\end{itemize}
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+ \begin{center}
+ {\color{BlueViolet}\large Thank you for your attention!}\\
+ {\small References and sources available at}\\[1cm]
+ {\small \url{https://github.com/ulikoehler/Hauptseminar}}
+ \end{center}
 \end{frame}
 
 \end{document}
