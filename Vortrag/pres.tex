@@ -66,7 +66,7 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
 \begin{frame}{Structure of this talk}
 \begin{itemize}
 \item Issues of non-phylogenic functional prediction
-\item What is phylogenomic inference
+\item What is phylogenomic inference?
 \item Phylogenetic tree reconciliation
 \item Phylogenomic inference methodology
 \item Phylogenomic databases and algorithms:
@@ -85,12 +85,12 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
   \item \textit{High-throughput sequencing}\\
   \textrightarrow\ Many proteins, few information available:\\
   \textasciitilde $90000$ PDB structures vs $5.1\times10^6$ UniProt/TrEMBL sequences
-  \item No score difference between strong local (domain?) similarities and weak global similarities
+  \item Alignment score does not distinguish between matching domains
   \item Difficult to separate \textit{orthologs} and \textit{paralogs}
  \end{itemize}
 \end{frame}
 
-\begin{frame}[allowframebreaks]{What is phylogenomics?}
+\begin{frame}[allowframebreaks]{What is phylogenomic inference?}
  \begin{tikzpicture}[scale=0.65,>=latex',yshift=-3cm]
  \tikzstyle{toptext}=[font=\huge,minimum height=3em,anchor=mid,text centered]
  \tikzstyle{labeltext}=[font=\large,minimum height=3em,anchor=west,text centered]
@@ -104,8 +104,8 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
   % Labels
   \node [labeltext,below=4cm of phylo,xshift=4cm] (phylolabel)
       {\textcolor{ForestGreen}{Evolutionary relationship (phylogenetics)}};
-  \node [labeltext,below=2.5cm of genomic,xshift=1cm] (genomicslabel)
-      {\textcolor{Red}{utilizes genomic information}};
+  \node [labeltext,below=2.4cm of genomic,xshift=1cm] (genomicslabel)
+      {\textcolor{Red}{analyze genomes}};
   \node [labeltext,below=10mm of inference] (inferencelabel)
       {\textcolor{Blue}{infer function}};
   % Arrows
