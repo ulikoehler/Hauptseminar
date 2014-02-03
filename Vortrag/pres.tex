@@ -83,9 +83,9 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
 \begin{frame}{Non-phylogenomic function prediction}
  \begin{itemize}
   \item \textit{High-throughput sequencing}\\
-  \textrightarrow\ Many proteins, few information available
-  \item Slow manual annotation: $~90000$ PDB structures vs $5.1\times10^6$ UniProt/TrEMBL sequences
-  \item No score difference between strong local (domain?) similarities and
+  \textrightarrow\ Many proteins, few information available:\\
+  \textasciitilde $90000$ PDB structures vs $5.1\times10^6$ UniProt/TrEMBL sequences
+  \item No score difference between strong local (domain?) similarities and weak global similarities
   \item Difficult to separate \textit{orthologs} and \textit{paralogs}
  \end{itemize}
 \end{frame}
@@ -96,7 +96,7 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
  \tikzstyle{labeltext}=[block,font=\large,minimum height=3em,anchor=west,text centered]
  \begin{scope}[yshift=-4cm]
   % Text at the top
-  \node [toptext](phylo) {\raisebox{0pt}[\height][0pt]{\textcolor{ForestGreen}{Phylo}}};
+  \node [toptext,yshift=1mm](phylo) {\raisebox{0pt}[\height][0pt]{\textcolor{ForestGreen}{Phylo}}};
   \node [toptext,right=-3mm of phylo](genomic)
     {\raisebox{0pt}[\height][0pt]{\textcolor{Red}{genomic}}};
   \node [toptext,right=0cm of genomic] (inference)
@@ -119,11 +119,10 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
  \end{tikzpicture}
  \framebreak
  \begin{itemize}
-  \item Function prediction enhancement concept
+  \item Concept to enhance homology-based function predictions
   \item Can be applied to both genes and proteins
   \item Attempt to \textbf{separate \textit{orthologs} and \textit{paralogs}}\\
   \textrightarrow\ \textit{ortholog} = high probability of similar or identical function
-  \item Infer function based on homology
   \item \textit{Phylogenetic tree reconciliation}:\\
         Identify \textit{speciation} and \textit{duplication} events in phylogenetic trees
  \end{itemize}
@@ -149,19 +148,21 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
 \draw [connection]
       (proteinA) |- (AB.east);
 \draw [connection]
-      (proteinB) |- (AB.west);
-\draw [connection]
-      ([yshift=1.4mm]AB.south) |- (ABC.east);
+      (proteinB) |- (AB.west);x
 %To-root
 \draw [connection]
-      ([yshift=1.4mm]ABC.south) -- ([yshift=1cm]ABC.north);
+      ([yshift=1.37mm]ABC.south) -- ([yshift=1.1cm]ABC.north);
 %C -> root
 \onslide<1-2>
 \draw [connection]
       (proteinC) |- (ABC.west);
+\draw [connection]
+      ([yshift=1.4mm]AB.south) |- (ABC.east);
 \onslide<3>
 \draw [connection,dashed]
       (proteinC) |- (ABC.west);
+\draw [connection]
+      ([yshift=1.4mm]AB.south) |- ([xshift=-2mm]ABC.east);
 %Text
 \onslide<1>
 \node [right=5mm of proteinC,text width=3cm,yshift=2cm] (txt)
@@ -169,7 +170,7 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
 \onslide<2>
 \node [left=0mm of ABC,yshift=10mm,x](dupspecLabel){\textcolor{red}{Duplication or speciation?}};
 \draw [draw=red,->, line width=2pt]
-      (dupspecLabel) to [bend right=15](AB.mid);
+      (dupspecLabel) to [bend right=15]([yshift=-1mm]AB.mid);
 \draw [draw=red,->, line width=2pt]
       (dupspecLabel) to (ABC.mid);
 %Slide 3: Example
@@ -178,9 +179,9 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
 \node [left=5mm of AB,yshift=10mm](specLabel){\textcolor{ForestGreen}{Speciation}};
 \node [right=1cm of ABC,yshift=5mm](dupLabel){\textcolor{Red}{Duplication}};
 \draw [draw=ForestGreen,->, line width=2pt]
-      (specLabel) to (AB.mid);
+      (specLabel) to ([yshift=-1mm]AB.mid);
 \draw [draw=red,->,line width=2pt]
-      (dupLabel) to (ABC.mid);
+      (dupLabel) to ([yshift=-1mm]ABC.mid);
 
 \node [right=5mm of proteinC,text width=3cm,yshift=2cm] (txt)
       {B: \textit{ortholog}\\C: \textit{paralog}};
@@ -234,8 +235,7 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
  \end{enumerate}
  \begin{itemize}
   \item More filtering to reduce noise
-  \item Given the tree topology, use only closely related subgroups\\
-        (in addition to filtering distant homologs in step 1)
+  \item Given the tree topology, use only closely related subgroups (in addition to filtering distant homologs in step 1)
  \end{itemize}
  %%%%%
  \framebreak
@@ -250,7 +250,6 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
   \item Complex statistical algorithms like RIO (\textit{Resampled inference of orthologs}), \textit{orthostrapper} or \textit{BETE}
   \end{itemize}
   \item Computationally intensive, requires highly-filtered input data
-  \item
  \end{itemize}
 \end{frame}
 
@@ -281,17 +280,16 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
  \begin{columns}[T]
  \begin{column}{.7\textwidth}
  \begin{itemize}
-  \item \textbf{FAT-CAT}: Webservice to predict protein function using phylogenomic methods
-  \item \textit{Stage 1:} Scoring against family HMMs
-  \item \textit{Stage 2:} Scoring against subtree HMMs
-  \item \textit{Stage 3:} Ortholog identification
-  \item \textit{Stage 4:} Functional annotation
+  \item \textbf{FAT-CAT}: PhyloFacts Webservice to predict protein function using phylogenomic methods
+  \item Integrates with \text{Pfam} and uses HMMs to find the sequence position in the tree
  \end{itemize}
  \end{column}
   \begin{column}{.3\textwidth}
    \includegraphics[width=1.2\textwidth]{figures/fatcat.jpg}
   \end{column}
  \end{columns}
+ \framebreak
+ \includegraphics[width=\textwidth]{figures/fatcat-pipeline.png}
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Issues of phylogenomic methods}
@@ -353,7 +351,7 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
   \item Multiple subsequent filter passes
   \item Huge sets of parameters, impossible to select optimal values
   \item Requires manual annotation \& experimental data
-  \item Even orthology is sometimes not sufficient for annotation transfer
+  \item S	ometimes even \textit{orthology} is not sufficient for annotation transfer
   \item Doesn't work well with distant homologs, requires highly-conserved domains
   \end{itemize}
 \end{frame}
@@ -365,14 +363,15 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
   \item ...\textbf{together with other concepts} functional prediction accuracy can be enhanced
   \item Computational complexity: Moore's law and alternative computational hardware\\
   \textrightarrow\ Large-scale application feasible in the future?
-  \item Phylogenomics can also be applied to attributes besides functions
-  \item PhyloFacts \& SIFTER: Usable tools, but not widely adopted or actively developed
+  \item Phylogenomic inference for DB verification
+  \item Can also be applied to other attributes (besides protein function)
+  \item PhyloFacts \& SIFTER: Usable tools, but apparently not widely adopted or actively developed
  \end{itemize}
 \end{frame}
 
 \begin{frame}{Conclusion (Phylogenomic inference)}
  \begin{itemize}
-  \item Powerful concept to identify \textit{orthologs}
+  \item Powerful concept for enhancing function prediction accuracy by identifying \textit{orthologs}
   \pause
   \item ... if it would actually work in practice
   \item Too complex, too manual, too many parameters
@@ -385,16 +384,16 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
 
 \begin{frame}{Conclusion (Seminar)}
 \begin{itemize}
-\item Protein function inference is a yet unsolved problem in computational biology
-\item Combine any information that is available, e.g.:
+\item \textit{in-silico} protein function inference is a yet unsolved problem in computational biology
+\item Combine any information that is available, including:
 \begin{itemize}
- \item Phylogenomics
  \item Context-based prediction
  \item Alternative splicing
  \item SNPs
+ \item Phylogenomics
  \item Experimental results
 \end{itemize}
-\item Only with all this information sufficient accurracy for \textit{in-silico} function prediction is achievable
+\item \textbf{Only with all this information combined sufficient accurracy for \textit{in-silico} function prediction is achievable}
 \end{itemize}
 \end{frame}
 
