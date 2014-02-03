@@ -92,8 +92,8 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
 
 \begin{frame}[allowframebreaks]{What is phylogenomics?}
  \begin{tikzpicture}[scale=0.65,>=latex',yshift=-3cm]
- \tikzstyle{toptext}=[block,font=\huge,minimum height=3em,anchor=mid,text centered]
- \tikzstyle{labeltext}=[block,font=\large,minimum height=3em,anchor=west,text centered]
+ \tikzstyle{toptext}=[font=\huge,minimum height=3em,anchor=mid,text centered]
+ \tikzstyle{labeltext}=[font=\large,minimum height=3em,anchor=west,text centered]
  \begin{scope}[yshift=-4cm]
   % Text at the top
   \node [toptext,yshift=1mm](phylo) {\raisebox{0pt}[\height][0pt]{\textcolor{ForestGreen}{Phylo}}};
@@ -281,7 +281,7 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
  \begin{column}{.7\textwidth}
  \begin{itemize}
   \item \textbf{FAT-CAT}: PhyloFacts Webservice to predict protein function using phylogenomic methods
-  \item Integrates with \text{Pfam} and uses HMMs to find the sequence position in the tree
+  \item Integrates with \textit{Pfam} and uses HMMs to find the sequence position in the precomputed tree
  \end{itemize}
  \end{column}
   \begin{column}{.3\textwidth}
