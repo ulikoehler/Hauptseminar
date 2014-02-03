@@ -32,6 +32,7 @@
 \newcolumntype{T}{c<{\ttfamily}}
 
 \title{Phylogenomic inference}
+\subtitle{Hauptseminar Frishman WS2013/2014}
 \author{Uli Köhler}
 \date{February 3rd 2014}
 
@@ -62,7 +63,7 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
 
 \frame{\titlepage}
 
-\begin{frame}
+\begin{frame}{Structure of this talk}
 \begin{itemize}
 \item Issues of non-phylogenic functional prediction
 \item Phylogenetic tree reconciliation
@@ -79,10 +80,10 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
 
 \begin{frame}{Non-phylogenomic function prediction}
  \begin{itemize}
-  \item Intention: Predict gene/protein function
   \item \textit{High-throughput sequencing}\\
-  \textrightarrow Many proteins, few information available
+  \textrightarrow\ Many proteins, few information available
   \item Slow manual annotation: $~90000$ PDB structures vs $5.1\times10^6$ UniProt/TrEMBL sequences
+  \item No score difference between strong local (domain?) similarities and
   \item Difficult to separate \textit{orthologs} and \textit{paralogs}
  \end{itemize}
 \end{frame}
@@ -102,7 +103,7 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
   \node [labeltext,below=4cm of phylo,xshift=4cm] (phylolabel)
       {\textcolor{ForestGreen}{Evolutionary relationship (phylogenetics)}};
   \node [labeltext,below=2.5cm of genomic,xshift=1cm] (genomicslabel)
-      {\textcolor{Red}{utilize genomic information}};
+      {\textcolor{Red}{utilizes genomic information}};
   \node [labeltext,below=10mm of inference] (inferencelabel)
       {\textcolor{Blue}{infer function}};
   % Arrows
@@ -118,7 +119,8 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
  \begin{itemize}
   \item Function prediction enhancement concept
   \item Can be applied to both genes and proteins
-  \item Attempt to \textbf{separate \textit{orthologs} and \textit{paralogs}}
+  \item Attempt to \textbf{separate \textit{orthologs} and \textit{paralogs}}\\
+  \textrightarrow\ \textit{ortholog} = high probability of similar or identical function
   \item Infer function based on homology
   \item \textit{Phylogenetic tree reconciliation}:\\
         Identify \textit{speciation} and \textit{duplication} events in phylogenetic trees
@@ -184,15 +186,12 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
 \end{tikzpicture}
 \end{frame}
 
-\begin{frame}{SIFTER}
-\begin{itemize}
- \item \textit{Statistical Inference of Function Through Evolutionary Relationships}
- \item Predicts protein function (homology-based) given a reconciled tree\\
- \textrightarrow Tree construction \& conciliation remains a problem
- \item Based on bayesian statistics
- \item Complex statistics (not shown here)
-\end{itemize}
-
+\begin{frame}{Computational reconciliation}
+ \begin{itemize}
+  \item NCBI COG DB: Bidirectional top BLAST hits
+  \item Complex statistical algorithms like RIO (\textit{Resampled inference of orthologs}), \textit{orthostrapper} or \textit{BETE}
+  \item Computationally intensive, requires highly-filtered input data
+ \end{itemize}
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Phylogenomic inference methodology}
@@ -209,7 +208,54 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
   \item Infer function from \textit{orthologs}
  \end{enumerate}
  \framebreak
+ \begin{enumerate}
+   \item \textcolor{gray}{Cluster homolog proteins}
+   \item \textcolor{gray}{Compute multiple alignment}
+   \item \textcolor{gray}{Edit alignment}
+   \item \textcolor{gray}{Mask less-conserved regions in alignment}
+ \end{enumerate}
+ \begin{itemize}
+  \item Raw alignments would introduce noise
+  \item Retain only high-scoring homology \& highly-conserved domains
+ \end{itemize}
 \end{frame}
+
+
+\begin{frame}{SIFTER}
+\begin{itemize}
+ \item \textit{Statistical Inference of Function Through Evolutionary Relationships}
+ \item Predicts protein function (homology-based) given a reconciled tree\\
+ \textrightarrow\ Tree construction \& reconciliation remains a problem
+ \item Based on bayesian statistics
+ \item Complex statistics (not shown here)
+\end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{PhyloFacts}
+ \begin{itemize}
+  \item \glqq Encyclopedia\grqq of \glqq books\grqq for known protein (super)families and structura domains
+  \item 92800 families (as of 2013-02-03)
+  \item Precomputed phylogenetic trees \& phylogenomic family HMMs\\
+  \textrightarrow\ Reasonably fast, but\\\glqq\textit{Some results can take hours to complete}\grqq
+  \item Provides structured access to annotated phylogenomic information about protein (super)families
+ \end{itemize}
+ \framebreak
+ \begin{columns}[T]
+ 
+ \begin{column}{.7\textwidth}
+ \begin{itemize}
+  \item \textbf{FAT-CAT}: Webservice to predict protein function using phylogenomic methods
+  \item Interactive FAT-CAT demonstration...
+ \end{itemize}
+ \end{column}
+  \begin{column}{.3\textwidth}
+   \includegraphics[width=1.2\textwidth]{figures/fatcat.jpg}
+  \end{column}
+ \end{columns}
+ %%%%%
+
+\end{frame}
+
 
 \begin{frame}[allowframebreaks]{Issues of phylogenomic methods}
   \textcolor{ForestGreen}{\textit{in-silico}}\ --\ \textcolor{Red}{Involves manual steps}
@@ -226,34 +272,36 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
  \end{enumerate}
  \framebreak
  \begin{enumerate}
-  \item Cluster homolog proteins
-  \item Compute multiple alignment
-  \item Edit alignment (remove potential non-homologs)
-  \item Mask less-conserved regions in alignment
+  \item \textcolor{gray}{Cluster homolog proteins}
+  \item \textcolor{gray}{Compute multiple alignment}
+  \item \textcolor{gray}{Edit alignment}
+  \item \textcolor{gray}{Mask less-conserved regions in alignment}
   \end{enumerate}
   \begin{itemize}
    \item Manual annotation \& selection\\
-   \textrightarrow Subjective, error-prone, time/cost-intensive
+   \textrightarrow\ Subjective, error-prone, time/cost-intensive
+   \item Information will be lost, does the annotator just select what he wants to see?
+   \item Algorithms too sensitive, are results always reliable?
   \end{itemize}
  %%%
  \framebreak
  \begin{enumerate}
   \setcounter{enumi}{4}
-  \item Construct phylogenetic tree
+  \item \textcolor{gray}{Construct phylogenetic tree}
  \end{enumerate}
  \begin{itemize}
   \item \textit{Distance-based} vs. \textit{character-based} construction algorithms
   \item Small, highly-conserved protein families perform better than large (super)families
   \item Lack of consistency across methods
   \item Algorithms scale poorly
-  \textrightarrow Can't be used for large (super)families
+  \textrightarrow\ Can't be used for large (super)families
   \item Some methods produce millions of equivalently scored topologies
  \end{itemize}
  %%%
  \framebreak
  \begin{enumerate}
   \setcounter{enumi}{6}
-  \item Overlay with experimental data
+  \item \textcolor{gray}{Overlay with experimental data}
  \end{enumerate}
  \begin{itemize}
   \item Database = Experimental data + sinferred data
@@ -264,19 +312,21 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
  %%%
  \framebreak
  \begin{itemize}
-  \item Huge sets of parameters
-  \item Requires manual annotation  experimental data
+  \item Multiple subsequent filter passes
+  \item Huge sets of parameters, impossible to select optimal values
+  \item Requires manual annotation \& experimental data
+  \item Even orthology is sometimes not sufficient for annotation transfer
  \end{itemize}
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Future of phylogenomic inference}
+\begin{frame}{Future of phylogenomic inference}
  \begin{itemize}
   \item Phylogenomics alone has too many problems and open questions, but...
   \pause
   \item ...\textbf{together with other concepts} functional prediction accuracy can be enhanced
   \item Computational complexity: Moore's law and alternative computational hardware\\
-  \textrightarrow Large-scale application feasible in the future?
-  \item 
+  \textrightarrow\ Large-scale application feasible in the future?
+  \item PhyloFacts
  \end{itemize}
 \end{frame}
 
@@ -290,6 +340,7 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
   \item Pure \textit{in-silico} phylogenomics\\
   \textrightarrow\ Low quality results
   \item Manual annotation can't keep up with \textit{HTS}
+  \item PhyloFacts provides a useful database for function prediction using phylogenomic approaches
  \end{itemize}
 \end{frame}
 
@@ -313,9 +364,11 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
 
 \begin{frame}
  \begin{center}
- {\color{BlueViolet}\large Thank you for your attention!}\\
- {\small References and sources available at}\\[1cm]
- {\small \url{https://github.com/ulikoehler/Hauptseminar}}
+ {\color{BlueViolet}\large Thank you for your attention!}\\[1cm]
+ {\small References and sources available at}\\
+ {\small \url{https://github.com/ulikoehler/Hauptseminar}}\\[1cm]
+ {\color{BlueViolet}\large Questions?}\\[1cm]
+ 
  \end{center}
 \end{frame}
 
