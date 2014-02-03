@@ -182,16 +182,7 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
 
 \node [right=5mm of proteinC,text width=3cm,yshift=2cm] (txt)
       {B: \textit{ortholog}\\C: \textit{paralog}};
-
 \end{tikzpicture}
-\end{frame}
-
-\begin{frame}{Computational reconciliation}
- \begin{itemize}
-  \item NCBI COG DB: Bidirectional top BLAST hits
-  \item Complex statistical algorithms like RIO (\textit{Resampled inference of orthologs}), \textit{orthostrapper} or \textit{BETE}
-  \item Computationally intensive, requires highly-filtered input data
- \end{itemize}
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Phylogenomic inference methodology}
@@ -218,16 +209,60 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
   \item Raw alignments would introduce noise
   \item Retain only high-scoring homology \& highly-conserved domains
  \end{itemize}
+ %%%%%
+ \framebreak
+ \begin{enumerate}
+  \setcounter{enumi}{4}
+  \item \textcolor{gray}{Construct phylogenetic tree}
+ \end{enumerate}
+ \begin{itemize}
+  \item Core problems:
+  \begin{itemize}
+   \item No information about actual ancestors is available
+   \item High computational complexity (optimal solution: NP-Hard!)
+  \end{itemize}
+  \item Use algorithms like \textit{maximum parsimony} or \textit{maximum likelihood}
+ \end{itemize}
+ %%%%%
+ \framebreak
+ \begin{enumerate}
+  \setcounter{enumi}{5}
+  \item \textcolor{gray}{Identify closely related subtrees}
+  \item \textcolor{gray}{Overlay with experimental data}
+ \end{enumerate}
+ \begin{itemize}
+  \item More filtering to reduce noise
+  \item Given the tree topology, use only closely related subgroups\\
+        (in addition to filtering distant homologs in step 1)
+ \end{itemize}
+ %%%%%
+ \framebreak
+ \begin{enumerate}
+  \setcounter{enumi}{7}
+  \item \textcolor{gray}{Differentiate \textit{orthologs} and \textit{paralogs}}
+ \end{enumerate}
+ \begin{itemize}
+  \item Computational tree reconciliation -- examples:
+  \begin{itemize}
+  \item NCBI COG DB: Bidirectional top BLAST hits
+  \item Complex statistical algorithms like RIO (\textit{Resampled inference of orthologs}), \textit{orthostrapper} or \textit{BETE}
+  \end{itemize}
+  \item Computationally intensive, requires highly-filtered input data
+  \item
+ \end{itemize}
 \end{frame}
 
-
 \begin{frame}{SIFTER}
+ \begin{enumerate}
+  \setcounter{enumi}{8}
+  \item \textcolor{gray}{Infer function from \textit{orthologs}}
+ \end{enumerate}
 \begin{itemize}
  \item \textit{Statistical Inference of Function Through Evolutionary Relationships}
  \item Predicts protein function (homology-based) given a reconciled tree\\
  \textrightarrow\ Tree construction \& reconciliation remains a problem
  \item Based on bayesian statistics
- \item Complex statistics (not shown here)
+ \item Complex mathematics (not shown here)
 \end{itemize}
 \end{frame}
 
@@ -239,23 +274,23 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
   \textrightarrow\ Reasonably fast, but\\\glqq\textit{Some results can take hours to complete}\grqq
   \item Provides structured access to annotated phylogenomic information about protein (super)families
  \end{itemize}
+ %%%%
  \framebreak
  \begin{columns}[T]
- 
  \begin{column}{.7\textwidth}
  \begin{itemize}
   \item \textbf{FAT-CAT}: Webservice to predict protein function using phylogenomic methods
-  \item Interactive FAT-CAT demonstration...
+  \item \textit{Stage 1:} Scoring against family HMMs
+  \item \textit{Stage 2:} Scoring against subtree HMMs
+  \item \textit{Stage 3:} Ortholog identification
+  \item \textit{Stage 4:} Functional annotation
  \end{itemize}
  \end{column}
   \begin{column}{.3\textwidth}
    \includegraphics[width=1.2\textwidth]{figures/fatcat.jpg}
   \end{column}
  \end{columns}
- %%%%%
-
 \end{frame}
-
 
 \begin{frame}[allowframebreaks]{Issues of phylogenomic methods}
   \textcolor{ForestGreen}{\textit{in-silico}}\ --\ \textcolor{Red}{Involves manual steps}
@@ -270,6 +305,7 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
   \item \textcolor{ForestGreen}{Differentiate \textit{orthologs} and \textit{paralogs}}
   \item \textcolor{Red}{Infer function from \textit{orthologs}}
  \end{enumerate}
+ %%%%
  \framebreak
  \begin{enumerate}
   \item \textcolor{gray}{Cluster homolog proteins}
@@ -316,7 +352,8 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
   \item Huge sets of parameters, impossible to select optimal values
   \item Requires manual annotation \& experimental data
   \item Even orthology is sometimes not sufficient for annotation transfer
- \end{itemize}
+  \item Doesn't work well with distant homologs, requires highly-conserved domains
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Future of phylogenomic inference}
@@ -326,14 +363,14 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
   \item ...\textbf{together with other concepts} functional prediction accuracy can be enhanced
   \item Computational complexity: Moore's law and alternative computational hardware\\
   \textrightarrow\ Large-scale application feasible in the future?
-  \item PhyloFacts
+  \item Phylogenomics can also be applied to attributes besides functions
+  \item PhyloFacts \& SIFTER: Usable tools, but not widely adopted or actively developed
  \end{itemize}
 \end{frame}
 
- 
 \begin{frame}{Conclusion (Phylogenomic inference)}
  \begin{itemize}
-  \item Powerful concept to separate \textit{orthologs} and \textit{paralogs}
+  \item Powerful concept to identify \textit{orthologs}
   \pause
   \item ... if it would actually work in practice
   \item Too complex, too manual, too many parameters
@@ -361,6 +398,42 @@ Folie \insertframenumber{} von \inserttotalframenumber\hspace{8mm}
 \end{itemize}
 \end{frame}
 
+\begin{frame}
+  \frametitle<presentation>{References}    
+  \begin{thebibliography}{10}
+  \tiny
+  \beamertemplatearticlebibitems
+  \bibitem{}
+    Kimmen~Sjölander
+    \newblock Phylogenomic inference of protein molecular function: advances and challenges
+    \newblock {\em Bioinformatics}, 2004
+  %\beamertemplatearticlebibitems
+  \bibitem{}
+    Barbara~E.~Engelhardt et al.
+    \newblock Protein Molecular Function Prediction by Bayesian Phylogenomics
+    \newblock {\em PLoS Computational Biology}, 2005
+  %\beamertemplatearticlebibitems
+  \bibitem{}
+    Jonathan~A.~Eisen \& Claire~M.~Frasier
+    \newblock Phylogenomics:Intersection of Evolution and Genomics
+    \newblock {\em Science}, 2003
+  %\beamertemplatearticlebibitems
+  \bibitem{}
+    Duncan~Brown, Kimmen~Sjölander
+    \newblock Functional Classification using Phylogenomic Inference
+    \newblock {\em PLoS Computational Biology}, 2006
+  %\beamertemplatearticlebibitems
+  \bibitem{}
+    Nandini Krishnamurthy et al.
+    \newblock PhyloFacts: an online structural phylogenomic encyclopedia for protein functional and structural classification
+    \newblock {\em Genome Biology}, 2006
+  %\beamertemplatearticlebibitems
+  \bibitem{}
+    Barbara~E.~Engelhardt et al.
+    \newblock A graphical model for predicting protein molecular function
+    \newblock {\em Proceedings of the International Conference on Machine Learning (ICML)}, 2006
+  \end{thebibliography}
+\end{frame}
 
 \begin{frame}
  \begin{center}
