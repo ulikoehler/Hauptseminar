@@ -47,13 +47,13 @@
 
 %Citations and references
 \usepackage{cite}
-\usepackage[german]{fancyref}
-\usepackage[german]{varioref}
-\renewcommand{\reftextfaceafter}{auf der \reftextvario{gegenüberliegenden}{nächsten} Seite} 
-\renewcommand{\reftextfacebefore}{auf der \reftextvario{gegenüberliegenden}{vorherigen} Seite} 
-\renewcommand{\reftextafter}{auf der \reftextvario{nächsten}{folgenden} Seite} 
-\renewcommand{\reftextbefore}{auf \reftextvario{der vorhergehenden}{der letzten} Seite} 
-\renewcommand{\reftextcurrent}{auf \reftextvario{der aktuellen}{dieser} Seite}
+\usepackage{fancyref}
+\usepackage{varioref}
+%%\renewcommand{\reftextfaceafter}{auf der \reftextvario{gegenüberliegenden}{nächsten} Seite} 
+%%\renewcommand{\reftextfacebefore}{auf der \reftextvario{gegenüberliegenden}{vorherigen} Seite} 
+%%\renewcommand{\reftextafter}{auf der \reftextvario{nächsten}{folgenden} Seite} 
+%%\renewcommand{\reftextbefore}{auf \reftextvario{der vorhergehenden}{der letzten} Seite} 
+%%\renewcommand{\reftextcurrent}{auf \reftextvario{der aktuellen}{dieser} Seite}
 
 
 %Typography, language and error corrections:
@@ -124,7 +124,7 @@ However, in order to assess protein function with high significance, the analysi
 
 This report will summarize Phylogenomics, a methodology to augment prediction quality by using phylogenetics in order to differentiate orthologs and paralogs, with the former having a higher probability of conserving their function during evolution.
 
-\section{Issues of non-phylogenomic function prediction}
+\section{Issues of non-phylogenomic function prediction}\label{sec:nonphylo-issues}
 
 Classical function prediction methods are often built on the comparison of protein features like tertiary structure.
 
@@ -155,7 +155,7 @@ The core concept of phylogenomics is the differentiation of homologs into orthol
 
 Orthologs have a higher probability of conserving function over evolution, whereas two proteins identified as paralog usually have different functions.
 
-If sufficient data is available to build a phylogenetic tree\footnote{Generally, the tree can be deduced from a sequence set alone, however this approach w ould introduce too much noise}, phylogenomic algorithms classify branching points in the tree as either duplication  or speciation, with the former yielding paralog proteins whereas the latter yields orthologs (see \cite{eisen2003phylogenomics}).
+If sufficient data is available to build a phylogenetic tree\footnote{Generally, the tree can be deduced from a sequence set alone, however this approach w ould introduce too much noise}, phylogenomic algorithms classify branching points in the tree as either duplication  or speciation, with the former yielding paralog proteins whereas the latter yields orthologs (see \cite{eisen2003phylogenomics}). This process is called \textit{tree reconciliation}
 
 A conceptual example of what is classified is visualized in figure \vref{fig:dupsec}.
 
@@ -200,8 +200,8 @@ A conceptual example of what is classified is visualized in figure \vref{fig:dup
  \end{figure}
 
 
-\paragraph{Phylogenomic workflow}
-The basic workflow, as described in \cite{brown2006functional}, consists of ten steps, some of which are shared with classical methods.
+\paragraph{Phylogenomic workflow}\label{sec:workflow}
+A typical workflow for phylogenomic analysis, as described in \cite{sjolander2004phylogenomic}, consists of ten steps, some of which are shared with classical methods.
 
 \begin{enumerate}
   \item Cluster homolog proteins
@@ -216,12 +216,110 @@ The basic workflow, as described in \cite{brown2006functional}, consists of ten 
   \item Infer function from \textit{orthologs}
 \end{enumerate}
 
+The first two steps are, to some extent, shared with most classical methods, however, contrary to said classical methods, the described workflow involves manual steps, most notably steps 3), 4) and 7).
+
+\paragraph{Phylogenetic tree construction}
+Algorithms to construct a phylogenetic tree can be classified into two main subgroups: \textit{distance-based} and \textit{character-based} methods.
+
+Whereas distance-based methods only compute pairwise distances between any two sequences and construct this tree solely based on the distance matrix -- therefore gaining a huge advantage in computational complexity -- character-based methods have advantages regarding accuracy, but are too slow for practical use on medium to large trees (see \cite{sjolander2004phylogenomic}).
+
+A detailed comparison of distance-based and character-based methods can be found in \cite{felsenstein1978cases}.
+
+Besides the high computational complexity of both classes of methods, there are other severe issues with tree construction in general (as outlined in \cite[p. 4f]{sjolander2004phylogenomic}):
+
+\begin{itemize}
+ \item Trees generated with different methods are inconsistent with each other\footnote{It therefore can be assumed, that for real, large-scale data, the trees are unalike the true, unknown biological tree}
+ \item For some algorithms, several millions of trees have the same score even for medium-sized datasets. Often, those trees have major differences, making it impossible to select a consistent topology)
+ \item Small, highly-conserved protein families perform better than large (super)families
+\end{itemize}
+
+
+\paragraph{Filtering overview}
+The steps in the workflow that have not been described so far have the purpose to remove noise from the input data. However, this concept yields a number of issues that are described in section \vref{sec:problems}
+
+Because of the limited extent of this report, these filter steps are not explained in detail here. See \cite[p. 3ff]{sjolander2004phylogenomic} for a detailed description of the purpose and algorithms for each individual step.
+
+\paragraph{Manual steps}
+According to \cite{sjolander2004phylogenomic} his specific workflow proved to yield better results than alternatives (especially those that don't involve manual steps). Issues in relation to manual aspects of the analysis will be discussed in detail in section \vref{sec:problems}.
+
 \section{Phylogenomic tools \& databases}
+
+\subsection{SIFTER}
+
+\textit{SIFTER} (see \cite{engelhardt2005protein}) is a tool to infer protein function from a reconciled phylogenetic tree based on bayesian statistics.
+
+As the mathematical methodology of \textit{SIFTER} is highly complex and would require many pages of introductory mathematics, this report will not describe in detail how \textit{SIFTER} works internally.
+
+However, it should be noted that \textit{SIFTER} circumvents most of the general phylogeny issues by only solving the last step of the workflow outlined in section \vref{sec:workflow}. While SIFTER itself may be mathematically correct and work well on test data, the rest of the phylogenomic workflow will often provide a low-quality reconciled tree as input for \textit{SIFTER}, effectively rendering the output data useless.
+
+\subsection{PhyloFacts}
+\textit{PhyloFacts}, first described in \cite{krishnamurthy2006phylofacts} is an ``Encyclopedia'' of ``books'' for known protein (super)families and structural domains. Since its initial publication, it changed significantly and now provides the \textit{FAT-CAT} webserver (see \cite{afrasiabi2013phylofacts}) that allows interactive protein classification.
+
+Although it is published by the same group at Berkeley University as the workflow (see \cite{sjolander2004phylogenomic}) and \textit{SIFTER} (see \cite{engelhardt2005protein}), it circumvents most of the complexity by using a pre-computed phylogenetic tree and tries to place the query protein inside an appropriate position in said tree.
+
+As the tree is already reconciled (even if assessing the quality of the reconciliation seems to be error-prone considering the results of this report, yet outside the scope of this report), \textit{FAT-CAT} can use methods like \textit{SIFTER}\footnote{In \cite{krishnamurthy2006phylofacts} the authors state that they intend to use \textit{SIFTER} itself in the future, yet it is unknown whether it is actually used in the newest version}.
+
+The full workflow used by fatcat is visualized in figure \vref{fig:fatcat-pipeline}\footnote{Image source: http://makana.berkeley.edu/phylofacts/fatcat/about/}. A highly-detailed description of their methodology, is not within the scope of this report, however it's noteworthy that they first perform a family search using hidden markov models in order to place the query sequence in an appropriate position in the reconciled tree.
+
+The red arrows in figure \vref{fig:fatcat-pipeline} denote the workflow of \textit{FAST-CAT}, a new, experimental variant of \textit{FAT-CAT} that avoids some of the computational complexity of \textit{FAT-CAT}.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{../Vortrag/figures/fatcat-pipeline.png}
+\caption{The \textit{FAT-CAT} workflow pipeline}
+\label{fig:fatcat-pipeline}
+\end{figure}
+
+
+\paragraph{How useful is PhyloFacts?}
+Within the scope of this report, there are very few aspects that allow to make assumptions about the actual usefulness of SIFTER.
+
+Because these results are likely not significant, this report will list some aspects that seem related to the usefulness without drawing any conclusions.
+
+\begin{itemize}
+ \item PhyloFacts is not open-sourced -- in the opinion of the author of this report, it therefore clearly violates the scientific principle of reproducibility. It will be almost impossible to find bugs in both the implementation and the data basis in a complex application like PhyloFacts if the code is not provided to the general public.
+ \item Within the 3-day long \textit{FAT-CAT} research for the talk corresponding to this report, the job ID numbers of FAT-CAT ascended monotonically, and increased (on average) by only about 10 per day\footnote{\textit{STRING} had more than 80000 queries per day, averaged over a 7-day period}. It can therefore be assumed that PhyloFacts is not very widely used
+ \item \cite{krishnamurthy2006phylofacts} has been cited only 27 times since 2006. While this is more than e.g. \textit{SIMAP} (see \cite{arnold2005simap}) which has been cited 18 times since 2005 and since 2011 been used as STRING data source (see \cite{szklarczyk2011string}), it can be assumed that a widely and publicly adopted tool would be cited more often
+ \item The runtime of the tool takes dozends of minutes even for $<300$ AA query sequences
+  \item For multiple randomly selected predicted \textit{TrEMBL} sequences\footnote{Example: A1ULI6\_MYCSK}, PhyloFacts did not return any results beside PFam families (said families equivalent to those listed in \textit{UniProt}). Therefore, it did not predict any function for these queries. This aspect might require further research, but raises doubts whether PhyloFacts is useful also for de-novo analyses that don't use known proteins with close relatives in the phylogenetic tree
+ \item The SIFTER homepage (\url{http://sifter.berkeley.edu/}) says ``Check back here for a SIFTER server sometime in the next few months!'' since 2006. Although PhyloFacts seems to be updated in several-year intervals, it is neither clear when the underlying database is updated (and, for example, if the parameters change) nor can anyone predict the future of the tool. The ``Encyclopedia'' has completely disappeared since the initial PhyloFacts release.
+ \item Conceptually, new sequences require the reconciled tree to incorporate close relatives. For many biologically relevant applications it is possible the tree doesn't contain any such sequence, and it's impossible to reproduce based on a specialized dataset because the application source code is not publically accessible
+\end{itemize}
+
+What seems to be useful about PhyloFacts is the attempt of the database to integrate information (especially phylogenetic information) from different sources (e.g. PFAM). If a user has a phylogeny-related question about a query sequence (e.g. \textit{distant clades}), PhyloFacts seems to be able to provide a user-friendly interface (e.g. for biologists that don't want to deal with complex bioinformatics toolsets), as depicted in figure \vref{fig:fatcat-result}.
+
+Additionally, the \textit{FAT-CAT} query supports selectable preset parameters, for example \textit{High recall} and \textit{High precision}.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\textwidth]{../Vortrag/figures/fatcat-results.jpg}
+\caption{The \textit{FAT-CAT} result page}
+\label{fig:fatcat-result}
+\end{figure}
 
 \section{Common problems of phylogenomics}\label{sec:problems}
 
-\paragraph{Huge parameter sets}
+\paragraph{Manual annotation requirement}
+As described in section \vref{sec:workflow} the workflow described in \cite{sjolander2004phylogenomic}. While this might improve the quality of the result, essentially it renders the method useless in the context of large-scale analysis as described in section \vref{sec:nonphylo-issues}.
 
+Because of limited availability of expert human resources, phylogenomic analyses with sufficient quality can't be performed on a large scale, even if the computational complexity of the automatable steps would not be an issue.
+
+\paragraph{Huge parameter sets}
+The workflow described in \cite{sjolander2004phylogenomic} incorporates several layers of filtering that depend on a large parameterset and even on human factors. It can be assumed that for any real analysis being performed, a large subset of the parameters is chosen suboptimally, because no inherently correct method is known that allows one to choose an optimal parameterset of that size.
+
+In order to achieve optimal results, the parameters would need to be selected for each prediction individually -- however, that is not possible in lack of an absolute reference (representing the biological reality). Almost all algorithms in bioinformatics suffer from similar problems, however in case of phylogenomics the parameterset is -- caused by the large number of steps -- extremely large and contains a large number of known and unknown interdependencies..
+
+Because of the human factor involved in the manual steps, a result may be irreproducible by another researcher, rendering the results subjective.
+
+\paragraph{Parameter sensitivity}
+Although a detailed analysis is outside the scope of this report, in \cite{sjolander2004phylogenomic} it is observed that the quality of the results depends on all the filtering passes being present in the workflow. This leads to the conclusion that the non-filter steps are so sensitive to noise that any minimal change in the input data could yield a totally different result.
+
+Because interdependencies in the parameters are largely unknown and the high dimensionality of the parameter space, it is essentially impossible to conclude that any result is not the case of an overyl
+
+This issue gets even more significant in cotext of manual processing: Even if assuming two researchers will select similar options for the same input data, a minor change in the parameters they use could cause the result to change significantly.
+
+\paragraph{Loss of information}
+Effectively, the huge parameter sets create a paradox: The phylogenomic method which is intended to augment a prediction by adding new information actually loses a significant amount of information in the filtering passes -- up to an extent where the prediction quality is detrimente. For real predictions (i.e. those lacking an absolute reference), this effect is impossible to detect
 
 \paragraph{Deducing information from itself}\label{p:self-deduction}
 Non-phylogenomic methods usually work well for closely-related protein families that will only infrequently express behaviour that yields systematic errors as outlined in section \vref{p:syserrors}. It can be assumed that if a large amount of information is available about a protein, classical methods provide a sufficient prediction quality, rendering phylogenomics useful especially for cases where few information is available.
@@ -233,11 +331,19 @@ Therefore, in an extreme the prediction would actually be augmented with informa
 It is outside of this report's scope to discuss or assess the effect of this behaviour in general, however it shall be noted that most augmentation methods express a similarly problematic behaviour. The author of this report assumes it is highly problematic to filter out these causality loops, because detailed information about the data sources is not available for any database.
 
 \paragraph{Resolving database issues using phylogenomics}
-While \cite{brown2006functional} mentions -- besides the systematic errors outlined in section\vref{p:syserrors} -- the ``propagation of errors in databases'' as a systematic error that can be detrimental to data quality, there seems to be no apparent reason why phylogenomics is better in resolving those issues than any other method leveraging additional data sources.
+While \cite{brown2006functional} mentions -- besides the systematic errors outlined in section\vref{p:syserrors} -- the ``propagation of errors in databases'' as a systematic error that can be detrimental to data quality, there seems to be no apparent reason why phylogenomics should be better in resolving those issues than any other method leveraging additional data sources.
 
-To the author of this report, the problems outlined before seem to be too severe to conclude without any doubt that phylogenomics will resolve database issues instead of creating even more ones and making manual result assessment difficult by adding another,  yet inaccurate layer of complexity to the prediction.
+To the author of this report, the problems outlined before seem to be too severe to conclude without any doubt that phylogenomics will resolve database issues instead of creating even more ones and making manual result assessment difficult by adding yet another, potentially inaccurate layer of complexity to the prediction.
 
-\section{Conclusion}
+\section{Conclusion \& Outlook}
+
+Phylogenomics is a method that attempts to augment function prediction by leveraging evolutional information to differentiate orthology and paralogs. Even if a full analysis based on carefully selected test data is outside the scope of this report, the issues described in this report arise doubts whether phylogenomics provides a tool that can be used for real data.
+
+However, issues like the high computational complexity might be partially resolved by advancements in computational hardware or algorithms in the future. \textit{PhyloFacts} provides an example of how a computationally-feasible phylogenomic tool can be predicted, although the quality of the results in contrast to other databases
+
+In practical function prediction, however, it's neccessary to combine any available information and method. Although care has to be taken to ensure the issues of phylogenomics are not detrimental to the result, in many cases other information sources like \textit{context-based prediction} are not sufficient for a significant result.
+
+Therefore, disregarding any practical issues, phylogenomics provide one of many conceptual sources of information, all of which have to be combined to improve in-silico predictions.
 
 \renewcommand\refname{Bibliography}
 \bibliographystyle{alphadin}
