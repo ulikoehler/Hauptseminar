@@ -1,0 +1,247 @@
+\documentclass[pdftex,paper=A4,DIV=calc,titlepage,12pt]{scrartcl}
+
+%Global options
+\usepackage[paper=a4paper,includefoot,includehead,left=20mm,right=20mm,top=20mm,bottom=20mm]{geometry}
+\usepackage[pdftex]{graphicx}
+%\usepackage[colorlinks=true,
+	    %linkcolor=red,
+	    %anchorcolor=black,
+	    %citecolor=green,
+	    %pagecolor=red,
+	    %urlcolor=cyan
+	    %]
+	    %{hyperref}
+\usepackage{nameref}
+
+\usepackage{tikz}
+\usetikzlibrary{calc,arrows,matrix,fit,positioning}
+
+%Page header
+\usepackage{fancyhdr}
+\usepackage{fancyhdr} 
+\pagestyle{fancyplain}
+\headheight\baselineskip
+\topmargin-0.75cm
+\textheight47\baselineskip
+\def\MakeUppercase#1{#1}
+\makeatletter
+\lhead[\fancyplain{}{\thepage}]
+      {\fancyplain{}{\slshape Burrows-Wheeler-Transformation}} % <--- Titel eintragen
+\rhead[\fancyplain{}{\slshape Uli Köhler	}]    % <--- Name eintragen
+      {\fancyplain{}{\thepage}}
+\cfoot[]{}
+\makeatother
+
+
+%Theorems
+\usepackage{thmbox} %Boxed theorems
+
+%Tables, Floats and figures
+\usepackage{array}
+\usepackage{float} %COnfigure figure floats to be boxed
+  \floatstyle{boxed}
+  \restylefloat{figure}
+
+%Special formats
+\usepackage{url}
+
+%Citations and references
+\usepackage{cite}
+\usepackage[german]{fancyref}
+\usepackage[german]{varioref}
+\renewcommand{\reftextfaceafter}{auf der \reftextvario{gegenüberliegenden}{nächsten} Seite} 
+\renewcommand{\reftextfacebefore}{auf der \reftextvario{gegenüberliegenden}{vorherigen} Seite} 
+\renewcommand{\reftextafter}{auf der \reftextvario{nächsten}{folgenden} Seite} 
+\renewcommand{\reftextbefore}{auf \reftextvario{der vorhergehenden}{der letzten} Seite} 
+\renewcommand{\reftextcurrent}{auf \reftextvario{der aktuellen}{dieser} Seite}
+
+
+%Typography, language and error corrections:
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern} %Latin modern = enhanced CM font
+\usepackage{xspace} %Space enhancements
+\usepackage[tracking=true,activate={true,nocompatibility}]{microtype} %PDFTeX typography enhancements
+\usepackage{fixltx2e}
+%Line spacing
+\usepackage{setspace}
+
+\usepackage{inconsolata}
+
+
+%Header declarations
+\pagestyle{headings}
+
+%Create a new boxed type of theorems
+\newtheorem[L]{boxedDefinition}{Definition}
+\newtheorem{definition}{Definition}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+%Scriptsized, vertically and horizontally centered tabular column type
+\newcolumntype{s}[1]{>{\scriptsize\centering\arraybackslash}m{#1}}
+
+
+\title{3D-Tumorvisualisation}
+\subtitle{Seminararbeit}
+\author{Uli Köhler}
+%\institute[EMG]{Ernst-Mach-Gymnasium Haar}
+\date{9.~November 2010}
+
+\newcommand{\footnoteremember}[2]{\footnote{#2}\newcounter{#1}\setcounter{#1}{\value{footnote}}}
+\newcommand{\footnoterecall}[1]{\footnotemark[\value{#1}]}
+%Utility to insert a newline after a paragraph declaration
+\newcommand{\paranl}{$~~$\\}
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\sloppy
+\begin{document}
+\begin{titlepage}
+\begin{center}
+ \end{center}
+\vspace{2cm}
+\begin{center}
+ \large\textsc{Seminar report}\\[5mm]
+ {\Huge\centering\bfseries\selectfont Phylogenomic inference}\\[2cm]
+\begin{center}
+  Uli Köhler -- 2014-02-03
+\end{center}
+\vspace{2cm}
+\end{center}
+\tableofcontents
+\end{titlepage}
+
+\section{Introduction}
+Since high-throughput sequencing is commercially available, computational biologist are facing an ever-increasing amount of genomic and proteomic data.
+
+In order to leverage all this information for applications like in-silico drug target searching, advanced methods have been developed that use databases of known protein properties in order to infer properties of new proteins.
+
+The most interesting property of any protein is its function -- if the function would be known for any protein in the proteome, it would be relatively easy to derive potential drug targets from this information.
+
+One of the most important concepts in this area of bioinformatics is homology-based function prediction: Proteins of high similarity have a high probability of having a similar or identical function that has possibly been conserved in the evolutional history of the organism.
+
+However, in order to assess protein function with high significance, the analysis has to use information from all available sources in order to eliminate as many sources of error as possible.
+
+This report will summarize Phylogenomics, a methodology to augment prediction quality by using phylogenetics in order to differentiate orthologs and paralogs, with the former having a higher probability of conserving their function during evolution.
+
+\section{Issues of non-phylogenomic function prediction}
+
+Classical function prediction methods are often built on the comparison of protein features like tertiary structure.
+
+This concept is based on the assumption that if structural elements like domains are conserved in a protein family, there is a significant probability that the element is critical for the family-specific function.
+
+For most proteins that are known today however, the tertiary structure is not known -- the PDB database currently contains \textasciitilde$90000$\footnote{2014-02-03} structures, whereas  \textasciitilde$5.1\times10^6$ UniProt/TrEMBL\footnote{2014-02-03, combined} sequences.
+
+This huge discrepancy is mainly based on the expensiveness of structural assessment methods like X-ray crystallography that not only require a specialized laboratory, but also -- for each individual experiment -- expert knowledge to crystallize the protein and assess the X-ray crystallogram. To date, only few advances have been made in automation of those methods (a summary is provided at \cite{groves2007recent}) and most of them require a high-quality X-ray beam only available in particle accelerators like Synchrotrons which are not available to most laboratories.
+
+In the future, this discrepancy is expected to increase even more, because commercially available sequencers drop in price rapidly and allow semi-automatic sequencing with a speed of several Gigabases per day. Besides these devices yielding a large amount of predicted proteins, recent advances have been made in an area called \textit{shotgun proteomics} that use shotgun sequencing methods well-known from genomic sequencing methodologies in order to sequence proteoms directly. As described in \cite{wu2002shotgun}, these methods are available since more than ten years and will.
+
+Therefore, in order to cope with the massive amount of sequence-only proteins, computational biology tries to infer protein functions from sequence and relations to known proteins.
+
+\paragraph{Systematic errors of non-phylogenomic prediction}\label{p:syserrors}
+While those methods yield high-quality predictions for a large number of proteins, there are several systematic errors outlined in \cite{brown2006functional}:
+
+\begin{itemize}
+ \item \textit{Gene duplication} is not taken into account, yielding a predicted orthology, while the proteins would have to be considered paralog
+ \item \textit{Domain shuffling} events that cause highly similar sequences to have different protein functions due to a largely different structure
+ \item \textit{Evolutionary distance} is not used to augment the prediction, therefore the chance of homolog proteins having the same function in distantly-related species is overrated.
+\end{itemize}
+
+\section{Phylogenomic methodology}
+
+Phylogenomics attempts to minimize the influence of aforementioned errors by improving homology metrics using phylogenetic information that provides knowledge about the evolutionary history of the protein in question.
+
+The core concept of phylogenomics is the differentiation of homologs into orthologs and paralogs.
+
+Orthologs have a higher probability of conserving function over evolution, whereas two proteins identified as paralog usually have different functions.
+
+If sufficient data is available to build a phylogenetic tree\footnote{Generally, the tree can be deduced from a sequence set alone, however this approach w ould introduce too much noise}, phylogenomic algorithms classify branching points in the tree as either duplication  or speciation, with the former yielding paralog proteins whereas the latter yields orthologs (see \cite{eisen2003phylogenomics}).
+
+A conceptual example of what is classified is visualized in figure \vref{fig:dupsec}.
+
+\begin{figure}[ht!]
+\centering
+\caption{Concept of Phylogenomics: Differentiating orthologs and paralogs}
+\label{fig:dupsec}
+\begin{tikzpicture}
+\tikzset{
+  protein/.style = {block, align=center, text centered,fill=orange,
+		    draw, rectangle, rounded corners},
+  ancestor/.style = {block,minimum size=0cm},
+  connection/.style = {thick,draw,arrowhead=4mm, line width=2pt}
+};
+%Protein nodes
+\node [protein] (proteinA) {A};
+\node [protein, right=2cm of proteinA] (proteinB) {B};
+\node [protein, right=2cm of proteinB] (proteinC) {C};
+%Invisible ancestors
+\node [ancestor,yshift=2cm] (AB) at ($(proteinA)!0.5!(proteinB)$) {};
+\node [ancestor,yshift=3cm] (ABC) at ($(proteinB)!0.5!(proteinC)$) {};
+%Paths
+\draw [connection]
+      (proteinA) |- (AB.east);
+\draw [connection]
+      (proteinB) |- (AB.west);x
+%To-root
+\draw [connection]
+      ([yshift=1.37mm]ABC.south) -- ([yshift=1.1cm]ABC.north);
+%C -> root
+\draw [connection]
+      (proteinC) |- (ABC.west);
+\draw [connection]
+      ([yshift=1.4mm]AB.south) |- (ABC.east);
+%Text
+\node [left=0mm of ABC,yshift=10mm,x](dupspecLabel){\textcolor{red}{Duplication or speciation?}};
+\draw [draw=red,->, line width=2pt]
+      (dupspecLabel) to [bend right=15]([yshift=-1mm]AB.mid);
+\draw [draw=red,->, line width=2pt]
+      (dupspecLabel) to (ABC.mid);
+ \end{tikzpicture}
+ \end{figure}
+
+
+\paragraph{Phylogenomic workflow}
+The basic workflow, as described in \cite{brown2006functional}, consists of ten steps, some of which are shared with classical methods.
+
+\begin{enumerate}
+  \item Cluster homolog proteins
+  \item Compute multiple alignment
+  \item Edit alignment (remove potential non-homologs)
+  \item Mask less-conserved regions in alignment
+  \item Construct phylogenetic tree
+  \item Identify closely related subtrees
+  \item Overlay with experimental data
+  \item Differentiate \textit{orthologs} and \textit{paralogs}\\
+	(\textit{Tree reconciliation})
+  \item Infer function from \textit{orthologs}
+\end{enumerate}
+
+\section{Phylogenomic tools \& databases}
+
+\section{Common problems of phylogenomics}\label{sec:problems}
+
+\paragraph{Huge parameter sets}
+
+
+\paragraph{Deducing information from itself}\label{p:self-deduction}
+Non-phylogenomic methods usually work well for closely-related protein families that will only infrequently express behaviour that yields systematic errors as outlined in section \vref{p:syserrors}. It can be assumed that if a large amount of information is available about a protein, classical methods provide a sufficient prediction quality, rendering phylogenomics useful especially for cases where few information is available.
+
+However, few information being available could hypothetically be detrimental to the phylogenetic tree -- in many cases the information contained in said tree will be derived only from the protein family sequence set itself. However, the same exact sequence set will be used for the classical prediction that will be augmented by phylogenetic information.
+
+Therefore, in an extreme the prediction would actually be augmented with information it already contains, rendering the augmentation useless and (under some circumstances) even decreasing the prediction quality because some aspects of the original prediction are overrated in the final score
+
+It is outside of this report's scope to discuss or assess the effect of this behaviour in general, however it shall be noted that most augmentation methods express a similarly problematic behaviour. The author of this report assumes it is highly problematic to filter out these causality loops, because detailed information about the data sources is not available for any database.
+
+\paragraph{Resolving database issues using phylogenomics}
+While \cite{brown2006functional} mentions -- besides the systematic errors outlined in section\vref{p:syserrors} -- the ``propagation of errors in databases'' as a systematic error that can be detrimental to data quality, there seems to be no apparent reason why phylogenomics is better in resolving those issues than any other method leveraging additional data sources.
+
+To the author of this report, the problems outlined before seem to be too severe to conclude without any doubt that phylogenomics will resolve database issues instead of creating even more ones and making manual result assessment difficult by adding another,  yet inaccurate layer of complexity to the prediction.
+
+\section{Conclusion}
+
+\renewcommand\refname{Bibliography}
+\bibliographystyle{alphadin}
+\bibliography{skript}
+\subsection*{Open Data}\label{opendata}
+Alle für die Erstellung dieser Ausarbeitung sowie für die Präsentation verwendeten Quelldateien und Rohdaten können dauerhaft unter \url{https://github.com/ulikoehler/Proseminar} abgerufen werden
+\end{document}
